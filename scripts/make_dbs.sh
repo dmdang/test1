@@ -22,17 +22,19 @@ make_db () {
         continue
     fi
     echo "Making ${subset} set"
-    $CAFFE/build/tools/convert_imageset \
+    $CAFFE/tools/convert_imageset \
         ${ROOT_DIR}/ ${DB_DIR}/${subset}.txt ${DB_DIR}/${subset}_lmdb \
         -resize_height ${RESIZE_HEIGHT} -resize_width ${RESIZE_WIDTH}
   done
 
   echo "Computing images mean"
-  $CAFFE/build/tools/compute_image_mean \
+  $CAFFE/tools/compute_image_mean \
       ${DB_DIR}/train_lmdb ${DB_DIR}/mean.binaryproto
 }
 
-for d in cuhk03 cuhk01 prid viper 3dpes ilids shinpuhkan; do
+#for d in cuhk03 cuhk01 prid viper 3dpes ilids shinpuhkan; do
+
+for d in 3dpes; do
     echo "Making $d"
     python2 tools/make_lists_id_training.py $EXP/datasets/$d $EXP/db/$d
     make_db $EXP/datasets/$d $EXP/db/$d

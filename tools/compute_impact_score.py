@@ -30,7 +30,7 @@ def parse_prototxt(model_file, layer_name):
 
 def main(args):
     caffe.set_device(0)
-    caffe.set_mode_gpu()
+    caffe.set_mode_cpu()
     blob, next_layer = parse_prototxt(args.model, args.layer)
     net = caffe.Net(args.model, args.weights, caffe.TEST)
     # Channelwise for conv

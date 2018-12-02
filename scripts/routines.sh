@@ -67,11 +67,11 @@ train_model() {
 
   # Training
   if [[ $# -eq 2 ]]; then
-    GLOG_logtostderr=1 mpirun -n 2 ${CAFFE_DIR}/build/tools/caffe train \
-      -solver ${solver} -gpu 0,1 2>&1 | tee ${log}
+    GLOG_logtostderr=1 mpirun -n 2 ${CAFFE_DIR}/tools/caffe train \
+      -solver ${solver} -cpu 0,1 2>&1 | tee ${log}
   else
-    GLOG_logtostderr=1 mpirun -n 2 ${CAFFE_DIR}/build/tools/caffe train \
-      -solver ${solver} -weights ${pretrained_model} -gpu 0,1 2>&1 | tee ${log}
+    GLOG_logtostderr=1 mpirun -n 2 ${CAFFE_DIR}/tools/caffe train \
+      -solver ${solver} -weights ${pretrained_model} -cpu 0,1 2>&1 | tee ${log}
   fi
 }
 
@@ -98,10 +98,10 @@ extract_features() {
     local model=$(mktemp)
     sed -e "s/\${dataset}/${dataset}/g; s/\${subset}/${subset}/g" \
       ${MODELS_DIR}/exfeat_template.prototxt > ${model}
-    ${CAFFE_DIR}/build/tools/extract_features \
+    ${CAFFE_DIR}/tools/extract_features \
       ${trained_model} ${model} ${blob},label \
       ${result_dir}/${subset}_features_lmdb,${result_dir}/${subset}_labels_lmdb \
-      ${num_iters} lmdb GPU 0
+      ${num_iters} lmdb CPU 0
     python2 tools/convert_lmdb_to_numpy.py \
       ${result_dir}/${subset}_features_lmdb ${result_dir}/${subset}_features.npy \
       --truncate ${num_samples}
